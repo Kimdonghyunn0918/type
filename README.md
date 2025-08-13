@@ -8,7 +8,7 @@ Suricata IDS 로그를 수집해 머신러닝으로 악성 여부를 판단하�
 
 ```
 final/
-├── run.py                       # 메인 실행 스크립트
+├── main.py                       # 메인 실행 스크립트
 ├── feature_engineering.py       # payload 기반 피처 생성 함수 정의
 ├── feature_weight_map.py        # 공격 유형별 피처 가중치 매핑
 ├── ml_alert_to_slack.py         # ML 결과를 Slack으로 전송
