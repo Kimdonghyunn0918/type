@@ -7,36 +7,44 @@ Suricata IDS 로그를 수집해 머신러닝으로 악성 여부를 판단하�
 ## 📁 프로젝트 구조
 
 ```
-final/
-├── main.py                       # 메인 실행 스크립트
-├── feature_engineering.py       # payload 기반 피처 생성 함수 정의
-├── feature_weight_map.py        # 공격 유형별 피처 가중치 매핑
-├── ml_alert_to_slack.py         # ML 결과를 Slack으로 전송
+ml/
+├── main.py # ML 추론 + Elasticsearch 저장
+├── feature_engineering.py # payload 기반 피처 생성
+├── feature_weight_map.py # 공격 유형별 피처 가중치
+├── ml_alert_to_slack.py # Slack 알림 전송 스크립트
 ├── model/
-│   └── score_based.pkl          # 학습된 ML 모델 번들
+│ └── score_based.pkl # 학습된 ML 모델 번들
+sensor/
+├── filebeat/
+│ └── filebeat.yml # Filebeat 설정
+├── suricata/
+│ ├── suricata.yml # IDS 설정
+│ └── rules/local.rules # IDS 룰셋
+server/ # 로그 저장 및 시각화 서버 (ELK)
+├── elasticsearch/config/elasticsearch.yml
+├── kibana/config/kibana.yml
+└── logstash/pipeline/suricata-pipeline.conf
 ```
+
+---
+
+## 🔹 실행 흐름
+1. Suricata – 네트워크 트래픽 분석 및 로그 생성
+2. Filebeat – Suricata 로그 수집
+3. Logstash – 로그 파싱 및 Elasticsearch로 전송
+4. ML 파이프라인 (`main.py`) – 악성 여부 예측, AbuseIPDB 조회, Elasticsearch 저장
+5. Slack 알림 (`ml_alert_to_slack.py`) – 악성 로그 탐지 시 알림 전송
 
 ---
 
 ## 사용 방법
 
-### 1. ML 추론 및 결과 저장 (Elasticsearch)
-
+### 1. ML 추론 및 결과 저장
 ```bash
-python run.py
-```
-
-- Suricata 로그 수집
-- payload → 피처 추출 → 예측
-- AbuseIPDB 조회
-- Elasticsearch `ml-classified-*` 인덱스에 저장
-
+python main.py
+---
 ### 2. Slack 알림 전송
-
-```bash
 python ml_alert_to_slack.py
-```
-
 - 최근 5분 내 alert 로그 검색
 - Slack 채널로 요약 메시지 + 상세 JSON 전송
 - 중복 전송 방지 캐시 적용
@@ -59,11 +67,3 @@ python ml_alert_to_slack.py
 ```bash
 pip install pandas scikit-learn elasticsearch slack_sdk joblib requests
 ```
-
-
----
-
-## 팀소개
-
-- 2025 중부대학교 정보보호학과 CCIT
-- 팀원: 윤현식(팀장), 윤지현, 최경규, 김동현
