@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  suricata:
+    image: jasonish/suricata:8.0.0
+    container_name: suricata
+    volumes:
+      -./suricata/suricata.yaml:/etc/suricata/suricata.yaml
+      -./suricata/rules:/etc/suricata/rules
+      -./suricata-logs:/var/log/suricata
+    network_mode: "host"
+    cap_add:
+      - NET_ADMIN
+      - SYS_NICE
+      - NET_RAW
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:${ELASTIC_STACK_VERSION}
+    container_name: filebeat
+    user: root
+    volumes:
+      -./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      -./filebeat/modules.d/suricata.yml:/usr/share/filebeat/modules.d/suricata.yml:ro
+      -./suricata-logs:/var/log/suricata:ro
+    # server/docker-compose.yml에 정의된 네트워크에 연결해야 합니다.
+    # 아래는 예시이며, 실제 환경에 맞게 수정해야 합니다.
+    # 예: `networks: - network-security-platform_elk-net`
+    # `docker network ls` 명령어로 네트워크 이름을 확인할 수 있습니다.
+    command: filebeat -e -strict.perms=false
+    depends_on:
+      - suricata

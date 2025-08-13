@@ -1,0 +1,2 @@
+# 여기에 사용자 정의 Suricata 규칙을 추가하세요.
+# 예: alert tcp any any -> any 80 (msg:"Test Rule"; sid:1000001; rev:1;)
