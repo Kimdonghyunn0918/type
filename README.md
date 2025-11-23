@@ -34,9 +34,9 @@ server/ # 로그 저장 및 시각화 서버 (ELK)
 3. Logstash – 로그 파싱 및 Elasticsearch로 전송
 4. ML 파이프라인 (`main.py`) – 악성 여부 예측, AbuseIPDB 조회, Elasticsearch 저장
 5. Slack 알림 (`ml_alert_to_slack.py`) – 악성 로그 탐지 시 알림 전송
-
 6. 시스템 구성도
-   <img width="336" height="350" alt="image" src="https://github.com/user-attachments/assets/d1a517d6-8a90-4b09-8a02-bfb53591301d" />
+
+<img width="336" height="350" alt="image" src="https://github.com/user-attachments/assets/d1a517d6-8a90-4b09-8a02-bfb53591301d" />
 
 
 ---
